@@ -42,6 +42,16 @@ struct SheetLayoutTests {
 @Suite(.serialized)
 @MainActor
 struct PresenterTests {
+  @Test(arguments: [CGFloat(59), 577, 267])
+  func transitionEndsAtScreenBottom(top: CGFloat) {
+    let container = CGRect(x: 0, y: 0, width: 390, height: 844)
+    let view = UIView(frame: CGRect(x: 0, y: top, width: 390, height: 233))
+    let target = SheetTransition.offscreenTransform(for: view, containerBounds: container)
+    #expect(top + target.ty == container.maxY)
+    view.transform = CGAffineTransform(translationX: 0, y: 90)
+    #expect(SheetTransition.offscreenTransform(for: view, containerBounds: container) == target)
+  }
+
   private final class Target: SheetDismissTarget {
     var calls = 0
     func requestDismissal() { calls += 1 }

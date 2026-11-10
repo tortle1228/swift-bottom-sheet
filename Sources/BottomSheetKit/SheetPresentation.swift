@@ -157,6 +157,12 @@ final class SheetTransition: NSObject, UIViewControllerTransitioningDelegate,
     UIAccessibility.isReduceMotionEnabled ? 0 : 0.25
   }
 
+  static func offscreenTransform(for view: UIView, containerBounds: CGRect) -> CGAffineTransform {
+    // Center and bounds remain valid when a dismissal starts from a drag transform.
+    let top = view.center.y - view.bounds.height / 2
+    return CGAffineTransform(translationX: 0, y: containerBounds.maxY - top)
+  }
+
   func animateTransition(using context: any UIViewControllerContextTransitioning) {
     guard let to = context.viewController(forKey: .to),
       let from = context.viewController(forKey: .from)
@@ -173,15 +179,14 @@ final class SheetTransition: NSObject, UIViewControllerTransitioningDelegate,
     if presenting {
       context.containerView.addSubview(view)
       view.frame = context.finalFrame(for: controller)
-      view.transform = CGAffineTransform(
-        translationX: 0, y: context.containerView.bounds.maxY - view.frame.minY)
     }
+    let offscreen = Self.offscreenTransform(
+      for: view, containerBounds: context.containerView.bounds)
+    if presenting { view.transform = offscreen }
     UIView.animate(
       withDuration: transitionDuration(using: context), delay: 0, options: [.curveEaseOut]
     ) {
-      view.transform =
-        presenting
-        ? .identity : CGAffineTransform(translationX: 0, y: context.containerView.bounds.height)
+      view.transform = presenting ? .identity : offscreen
     } completion: { _ in
       let completed = !context.transitionWasCancelled
       if !completed || !presenting { view.transform = .identity }
