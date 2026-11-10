@@ -167,7 +167,7 @@ Set both dismissal flags to `false` while submitting to disable backdrop taps, g
 
 Text size, color scheme, locale, and layout direction are inherited from the presenting view. Inject other environment values and objects explicitly **inside the sheet content closure**. The [form sample](Examples/Sample/ContentSizedForm.swift) and its [presenter](Examples/Sample/SampleApp.swift) show observable environment injection, focus, keyboard handling, dynamic height, submission locks, and a nested system modal.
 
-The kit supports Dynamic Type, VoiceOver modal focus and escape, and Reduce Motion. Keep your content accessible and scrollable at large text sizes. It does not provide global presentation, a popup stack, or SwiftUI system sheet detents. Keyboard movement follows docked keyboards; floating keyboard overlap is not avoided automatically.
+The kit supports Dynamic Type, VoiceOver modal focus and escape, and Reduce Motion. Keep your content accessible and scrollable at large text sizes. It does not provide global presentation, a popup stack, or SwiftUI system sheet detents. Keyboard movement follows docked keyboards; floating keyboard overlap is not avoided automatically. In `.automatic` mode, dragging content that scrolls takes the keyboard down with it; content that fits does not scroll, so it keeps the keyboard. A sheet requested while another presentation is being dismissed appears once that dismissal finishes.
 
 ## Run the sample and contribute
 

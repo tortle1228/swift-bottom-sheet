@@ -153,8 +153,15 @@ final class SheetCoordinator: NSObject, SheetDismissTarget {
       return
     }
     guard let desired, desired.isPresented, let anchor, anchor.viewIfLoaded?.window != nil,
-      let parent = anchor.parent, parent.presentedViewController == nil
+      let parent = anchor.parent
     else { return }
+    if let presented = parent.presentedViewController {
+      // Nothing else brings this sheet back once another presentation has left, so wait for it here.
+      if presented.isBeingDismissed, let leaving = presented.transitionCoordinator {
+        leaving.animate(alongsideTransition: nil) { [weak self] _ in self?.reconcile() }
+      }
+      return
+    }
     if let id = desired.id, !BottomSheetPresenter.shared.register(self, id: id) {
       NSLog("BottomSheetKit: duplicate active sheet identifier")
       desired.clear()
