@@ -12,6 +12,7 @@ struct SampleApp: App {
 
 private struct SampleItem: Identifiable {
   var id: Int
+  var revision = 0
 }
 
 private struct SampleView: View {
@@ -21,6 +22,11 @@ private struct SampleView: View {
   @State private var dismissals = 0
   @State private var longContent = false
   @State private var ownScroll = false
+  @State private var showsForm = ProcessInfo.processInfo.arguments.contains("-showForm")
+  @State private var submitting = false
+  @State private var followup = false
+  @State private var followupRequested = false
+  @State private var messages = SampleMessages()
   private let id = BottomSheetID("sample")
 
   var body: some View {
@@ -42,6 +48,7 @@ private struct SampleView: View {
         presented = true
       }
       Button("Show item") { item = SampleItem(id: 1) }
+      Button("Show form") { showsForm = true }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color(UIColor.secondarySystemBackground))
@@ -62,11 +69,29 @@ private struct SampleView: View {
       }
     }
     .bottomSheet(item: $item, onDismiss: { dismissals += 1 }) { value in
-      VStack(spacing: 20) {
-        Text("Item \(value.id)")
-        Button("Replace item") { item = SampleItem(id: value.id + 1) }
-        Button("Clear item") { item = nil }
+      ItemContent(
+        value: value, update: { item?.revision += 1 },
+        replace: { item = SampleItem(id: value.id + 1) }, clear: { item = nil })
+    }
+    .bottomSheet(
+      isPresented: $showsForm, configuration: formConfiguration,
+      onDismiss: {
+        dismissals += 1
+        submitting = false
+        followup = followupRequested
+        followupRequested = false
       }
+    ) {
+      ContentSizedForm(submitting: $submitting) {
+        followupRequested = true
+        showsForm = false
+      }
+      .environment(messages)
+      .environment(\.sampleCaption, "Explicit custom environment")
+      .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+    }
+    .sheet(isPresented: $followup) {
+      Button("Follow-up complete") { followup = false }
     }
     .dynamicTypeSize(
       ProcessInfo.processInfo.arguments.contains("-accessibilityText") ? .accessibility5 : textSize)
@@ -76,6 +101,35 @@ private struct SampleView: View {
     var value = BottomSheetConfiguration()
     value.contentScrolling = ownScroll ? .content : .automatic
     return value
+  }
+
+  private var formConfiguration: BottomSheetConfiguration {
+    var value = BottomSheetConfiguration()
+    value.maximumWidth = 600
+    value.contentScrolling = .content
+    value.contentInsets = EdgeInsets()
+    value.dismissesOnBackdropTap = !submitting
+    value.dismissesOnDrag = !submitting
+    return value
+  }
+}
+
+private struct ItemContent: View {
+  let value: SampleItem
+  let update: () -> Void
+  let replace: () -> Void
+  let clear: () -> Void
+  @State private var draft = ""
+
+  var body: some View {
+    VStack(spacing: 20) {
+      Text("Item \(value.id)")
+      Text("Revision \(value.revision)")
+      TextField("Draft", text: $draft).accessibilityIdentifier("itemDraft")
+      Button("Update item", action: update)
+      Button("Replace item", action: replace)
+      Button("Clear item", action: clear)
+    }
   }
 }
 

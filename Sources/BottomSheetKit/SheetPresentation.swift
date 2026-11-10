@@ -1,9 +1,15 @@
 import UIKit
 
 struct SheetLayout {
+  static func width(bounds: CGRect, safeArea: UIEdgeInsets, maximumWidth: CGFloat?) -> CGFloat {
+    let available = max(0, bounds.width - safeArea.left - safeArea.right)
+    guard let maximumWidth, maximumWidth.isFinite, maximumWidth > 0 else { return available }
+    return min(available, maximumWidth)
+  }
+
   static func frame(
     bounds: CGRect, safeArea: UIEdgeInsets, keyboardTop: CGFloat?, contentHeight: CGFloat,
-    chromeHeight: CGFloat, fillsHeight: Bool
+    chromeHeight: CGFloat, fillsHeight: Bool, maximumWidth: CGFloat? = nil
   ) -> CGRect {
     let bottom = min(bounds.maxY, max(bounds.minY, keyboardTop ?? bounds.maxY))
     let top = min(bottom, bounds.minY + safeArea.top + 12)
@@ -12,7 +18,11 @@ struct SheetLayout {
     let inset = bottom < bounds.maxY ? 0 : safeArea.bottom
     let desired = max(0, contentHeight) + max(0, chromeHeight) + inset
     let height = fillsHeight ? available : min(available, desired)
-    return CGRect(x: bounds.minX, y: bottom - height, width: bounds.width, height: height)
+    let width = width(bounds: bounds, safeArea: safeArea, maximumWidth: maximumWidth)
+    let left = bounds.minX + safeArea.left
+    let availableWidth = max(0, bounds.width - safeArea.left - safeArea.right)
+    return CGRect(
+      x: left + (availableWidth - width) / 2, y: bottom - height, width: width, height: height)
   }
 }
 
@@ -29,8 +39,8 @@ final class SheetPresentation: UIPresentationController {
     return SheetLayout.frame(
       bounds: containerView.bounds, safeArea: containerView.safeAreaInsets,
       keyboardTop: keyboardTop,
-      contentHeight: sheet.contentHeight, chromeHeight: sheet.chromeHeight,
-      fillsHeight: sheet.configuration.contentScrolling == .content
+      contentHeight: sheet.layoutContentHeight, chromeHeight: sheet.chromeHeight,
+      fillsHeight: sheet.fillsHeight, maximumWidth: sheet.configuration.maximumWidth
     )
   }
 
@@ -81,11 +91,13 @@ final class SheetPresentation: UIPresentationController {
 
   override func containerViewWillLayoutSubviews() {
     super.containerViewWillLayoutSubviews()
+    sheet?.measureContent(width: frameOfPresentedViewInContainerView.width)
     layoutPanel()
   }
 
   func layoutPanel() {
-    backdrop.frame = containerView?.bounds ?? .zero
+    guard let containerView else { return }
+    backdrop.frame = containerView.bounds
     // Reset the drag transform before setting a frame; UIKit frames are undefined under transforms.
     let transform = presentedView?.transform ?? .identity
     presentedView?.transform = .identity

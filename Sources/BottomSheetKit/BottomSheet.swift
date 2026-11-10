@@ -173,7 +173,10 @@ final class SheetCoordinator: NSObject, SheetDismissTarget {
       self.finishDismissal()
     }
     controller.loadViewIfNeeded()
-    controller.measureContent(width: parent.view.bounds.width)
+    controller.measureContent(
+      width: SheetLayout.width(
+        bounds: parent.view.bounds, safeArea: parent.view.safeAreaInsets,
+        maximumWidth: desired.configuration.maximumWidth))
     sheet = controller
     transitioning = true
     parent.present(controller, animated: !UIAccessibility.isReduceMotionEnabled) { [self] in

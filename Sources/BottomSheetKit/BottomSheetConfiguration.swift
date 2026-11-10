@@ -6,12 +6,16 @@ public struct BottomSheetConfiguration {
   public enum ContentScrolling {
     /// The sheet wraps ordinary content in a scroll view.
     case automatic
-    /// The content supplies its own scroll view or list and fills the available height.
+    /// The content supplies scrolling and fills the available height unless it reports a
+    /// preferred height with `bottomSheetContentHeight(_:)`.
     case content
   }
 
   /// The panel color, continued behind a docked keyboard. Defaults to the system background color.
   public var backgroundColor: Color = Color(UIColor.systemBackground)
+  /// The maximum panel width in points, centered within the horizontal safe area.
+  /// Defaults to nil (available width). Nonpositive and nonfinite values are ignored.
+  public var maximumWidth: CGFloat?
   /// The top corner radius in points. Defaults to 32.
   public var cornerRadius: CGFloat = 32
   /// Whether the grabber is visible. Defaults to true.

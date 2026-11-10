@@ -17,6 +17,17 @@ final class SheetController: UIViewController {
   var didDisappear: (() -> Void)?
   var configuration: BottomSheetConfiguration
   var contentHeight: CGFloat = 320
+  private(set) var reportedContentHeight: CGFloat?
+  var fillsHeight: Bool {
+    configuration.contentScrolling == .content && reportedContentHeight == nil
+  }
+  var layoutContentHeight: CGFloat {
+    guard configuration.contentScrolling == .content, let reportedContentHeight else {
+      return contentHeight
+    }
+    return reportedContentHeight + configuration.contentInsets.top
+      + configuration.contentInsets.bottom
+  }
   private let host = UIHostingController(rootView: AnyView(EmptyView()))
   private let scroll = ContentScrollView()
   private var fillsContentHeight: NSLayoutConstraint?
@@ -60,6 +71,7 @@ final class SheetController: UIViewController {
     scroll.translatesAutoresizingMaskIntoConstraints = false
     scroll.contentInsetAdjustmentBehavior = .never
     scroll.alwaysBounceVertical = false
+    scroll.delaysContentTouches = false
     view.addSubview(scroll)
     scroll.addSubview(host.view)
     host.didMove(toParent: self)
@@ -91,12 +103,16 @@ final class SheetController: UIViewController {
 
   func update(content: AnyView, configuration: BottomSheetConfiguration) {
     self.configuration = configuration
+    if configuration.contentScrolling == .automatic { reportedContentHeight = nil }
+    let observed = content.onPreferenceChange(SheetContentHeightKey.self) { [weak self] height in
+      Task { @MainActor [weak self] in self?.reportContentHeight(height) }
+    }
     if configuration.contentScrolling == .automatic {
       host.rootView = AnyView(
-        content.frame(maxWidth: .infinity)
+        observed.frame(maxWidth: .infinity)
           .padding(configuration.contentInsets).fixedSize(horizontal: false, vertical: true))
     } else {
-      host.rootView = AnyView(content.padding(configuration.contentInsets))
+      host.rootView = AnyView(observed.padding(configuration.contentInsets))
     }
     host.sizingOptions = configuration.contentScrolling == .automatic ? .intrinsicContentSize : []
     if isViewLoaded {
@@ -104,6 +120,16 @@ final class SheetController: UIViewController {
       measureContent(width: view.bounds.width)
     }
     presentationController?.containerView?.setNeedsLayout()
+    (presentationController as? SheetPresentation)?.layoutPanel()
+  }
+
+  func reportContentHeight(_ height: CGFloat?) {
+    guard configuration.contentScrolling == .content else { return }
+    let valid = height.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }
+    guard valid != reportedContentHeight else { return }
+    reportedContentHeight = valid
+    presentationController?.containerView?.setNeedsLayout()
+    (presentationController as? SheetPresentation)?.layoutPanel()
   }
 
   func measureContent(width: CGFloat) {

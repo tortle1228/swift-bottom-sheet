@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043F59E5DE8FE29745E466CB /* ContentSizedForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A19099DA05B285B24D82C02 /* ContentSizedForm.swift */; };
 		196B77EADAC9EE8BEAF7657F /* BottomSheetKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6CA163C58E20B5671A8E1D94 /* BottomSheetKit */; };
 		77E0C0196FB6AA081039D78E /* SheetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB80B3CC501BC1F3161D5BE2 /* SheetUITests.swift */; };
 		7881D05A4887A03B3A421F00 /* SampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052F45669487410195143B03 /* SampleApp.swift */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		052F45669487410195143B03 /* SampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleApp.swift; sourceTree = "<group>"; };
+		8A19099DA05B285B24D82C02 /* ContentSizedForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSizedForm.swift; sourceTree = "<group>"; };
 		958B0C9CDE441EDE49A100BD /* bottom-sheet */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "bottom-sheet"; path = ..; sourceTree = SOURCE_ROOT; };
 		9A0916D269E27AB262202B29 /* BottomSheetSampleUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BottomSheetSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB80B3CC501BC1F3161D5BE2 /* SheetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetUITests.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 		E537CB9C41448B618542D756 /* Sample */ = {
 			isa = PBXGroup;
 			children = (
+				8A19099DA05B285B24D82C02 /* ContentSizedForm.swift */,
 				052F45669487410195143B03 /* SampleApp.swift */,
 			);
 			path = Sample;
@@ -175,6 +178,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				043F59E5DE8FE29745E466CB /* ContentSizedForm.swift in Sources */,
 				7881D05A4887A03B3A421F00 /* SampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
