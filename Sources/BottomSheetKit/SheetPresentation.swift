@@ -19,6 +19,7 @@ struct SheetLayout {
 @MainActor
 final class SheetPresentation: UIPresentationController {
   private let backdrop = UIControl()
+  private let keyboardBackground = UIView()
   private var keyboardTop: CGFloat?
   private weak var previousFocus: NSObject?
   private var sheet: SheetController? { presentedViewController as? SheetController }
@@ -38,6 +39,8 @@ final class SheetPresentation: UIPresentationController {
     previousFocus = UIAccessibility.focusedElement(using: .notificationVoiceOver) as? NSObject
     backdrop.addTarget(self, action: #selector(tapBackdrop), for: .touchUpInside)
     backdrop.isAccessibilityElement = false
+    keyboardBackground.isUserInteractionEnabled = false
+    backdrop.addSubview(keyboardBackground)
     containerView.insertSubview(backdrop, at: 0)
     backdrop.alpha = 0
     updateBackdrop()
@@ -88,11 +91,17 @@ final class SheetPresentation: UIPresentationController {
     presentedView?.transform = .identity
     presentedView?.frame = frameOfPresentedViewInContainerView
     presentedView?.transform = transform
+    // Continue the panel color behind the keyboard's rounded top corners.
+    let panel = frameOfPresentedViewInContainerView
+    keyboardBackground.frame = CGRect(
+      x: panel.minX, y: panel.maxY, width: panel.width,
+      height: max(0, backdrop.bounds.maxY - panel.maxY))
     updateBackdrop()
   }
 
   private func updateBackdrop() {
     guard let config = sheet?.configuration else { return }
+    keyboardBackground.backgroundColor = UIColor(config.backgroundColor)
     backdrop.backgroundColor = UIColor(config.dimmingColor).withAlphaComponent(
       min(1, max(0, config.dimmingOpacity)))
   }

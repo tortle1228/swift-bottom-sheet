@@ -10,7 +10,7 @@ public struct BottomSheetConfiguration {
     case content
   }
 
-  /// The panel color. Defaults to the system background color.
+  /// The panel color, continued behind a docked keyboard. Defaults to the system background color.
   public var backgroundColor: Color = Color(UIColor.systemBackground)
   /// The top corner radius in points. Defaults to 32.
   public var cornerRadius: CGFloat = 32
