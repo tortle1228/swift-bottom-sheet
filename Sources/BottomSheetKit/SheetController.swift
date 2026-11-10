@@ -72,6 +72,8 @@ final class SheetController: UIViewController {
     scroll.contentInsetAdjustmentBehavior = .never
     scroll.alwaysBounceVertical = false
     scroll.delaysContentTouches = false
+    // Dragging scrolled content down takes the keyboard with it, as in a SwiftUI scroll view.
+    scroll.keyboardDismissMode = .interactive
     view.addSubview(scroll)
     scroll.addSubview(host.view)
     host.didMove(toParent: self)
