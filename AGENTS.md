@@ -22,8 +22,8 @@
 - Run python3 scripts/test-hooks to check hooks independently.
 - The sample Xcode project is checked in. After editing Examples/project.yml,
   regenerate it with xcodegen generate --spec Examples/project.yml.
-- Use SwiftLint 0.65.1. CI pins Xcode; local checks use the selected Xcode's
-  swift-format. Resolve format differences with the CI toolchain before merging.
+- Use SwiftLint 0.65.1 and the selected Xcode's swift-format for local checks.
+  Use the same selected Xcode toolchain for formatting, linting, and tests.
 
 ## Documentation
 
@@ -47,7 +47,8 @@
 - Allowed types: feat, fix, refactor, chore, test, docs, style, build, ci, perf, revert.
   Keep subjects concise and omit the trailing period.
 - Hooks check staged snapshots and never download, rewrite, or stage files.
-- Do not bypass hooks. Run the full check before pushing; CI repeats validation.
+- Do not bypass hooks. Run scripts/check locally before pushing.
+  There is no remote CI; the person pushing is responsible for running the full check.
 - Add focused tests for non-trivial behavior, especially transitions, repeated
   dismissal, identifier ownership, keyboard layout, and size changes.
 - Report deployment-target compilation separately from runtime verification.

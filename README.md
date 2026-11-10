@@ -188,7 +188,7 @@ scripts/lint
 scripts/check
 ```
 
-Bootstrap enables this repository's local Git hooks. `scripts/check` runs lint, hook self-checks, package tests, and sample UI tests. It chooses the first available iPhone simulator unless you set `SIMULATOR_ID`. Use `scripts/format` explicitly when formatting source. The UIKit package tests require an iOS simulator; macOS `swift test` is not the test entry point. XcodeGen is needed only when regenerating the sample after changes to `Examples/project.yml`, not to open the checked-in project. See [working rules](AGENTS.md) and the [CI workflow](.github/workflows/check.yml).
+Bootstrap enables this repository's local Git hooks. `scripts/check` runs lint, hook self-checks, package tests, and sample UI tests. It chooses the first available iPhone simulator unless you set `SIMULATOR_ID`. Use `scripts/format` explicitly when formatting source. The UIKit package tests require an iOS simulator; macOS `swift test` is not the test entry point. XcodeGen is needed only when regenerating the sample after changes to `Examples/project.yml`, not to open the checked-in project. Run `scripts/check` locally before every push; this repository does not run GitHub Actions. The person pushing is responsible for the full check; the commit hooks do not run the simulator tests. See [working rules](AGENTS.md).
 
 The implementation at `87a8704` passed lint, hook checks, 16 unit tests, and 11 UI tests, with additional small-iPhone and iPad layout checks. It compiled for an iOS 17 deployment target in Swift 6 mode; runtime checks used iOS 27.2 simulators. These checks do not establish iOS 17 runtime or physical-device verification, or integration with a production authentication service.
 
