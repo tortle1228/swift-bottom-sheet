@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+xcrun swift-format format --in-place --recursive Package.swift Sources Tests Examples/Sample Examples/SampleUITests

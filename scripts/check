@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+for script in scripts/bootstrap scripts/format scripts/lint scripts/check .githooks/*; do
+  bash -n "$script"
+done
+scripts/lint
+python3 scripts/test-hooks
+# iOS frameworks cannot be tested by the macOS `swift test` runner.
+if [[ -z "${SIMULATOR_ID:-}" ]]; then
+  SIMULATOR_ID=$(xcrun simctl list devices available -j | python3 -c '
+import json, sys
+for runtime, devices in json.load(sys.stdin)["devices"].items():
+    if "iOS" in runtime:
+        for device in devices:
+            if "iPhone" in device["name"]:
+                print(device["udid"])
+                sys.exit(0)
+sys.exit("No available iPhone simulator")')
+fi
+xcodebuild -scheme BottomSheetKit -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+  -derivedDataPath .build/DerivedData CODE_SIGNING_ALLOWED=NO test
+xcodebuild -project Examples/BottomSheetSample.xcodeproj -scheme BottomSheetSample \
+  -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+  -derivedDataPath .build/SampleDerivedData CODE_SIGNING_ALLOWED=NO test
+[[ ! -s readme.md ]] || { echo 'readme.md must remain empty' >&2; exit 1; }

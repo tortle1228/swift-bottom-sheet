@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+"""Validate the commit header; English prose is a review requirement."""
+import re
+import sys
+from pathlib import Path
+
+
+def valid(message):
+    lines = message.splitlines()
+    if not lines:
+        return False
+    header = lines[0]
+    if header.startswith(("Merge ", "Revert \"")):
+        return True
+    return bool(re.fullmatch(
+        r"(?:feat|fix|refactor|chore|test|docs|style|build|ci|perf|revert)"
+        r"(?:\([a-zA-Z0-9_./-]+\))?!?: \S(?:.*\S)?", header
+    )) and not header.endswith(".")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2 or not valid(Path(sys.argv[1]).read_text()):
+        sys.exit("Use type(scope): English description, without a trailing period")

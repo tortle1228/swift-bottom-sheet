@@ -1,0 +1,40 @@
+name: BottomSheetSample
+options:
+  deploymentTarget:
+    iOS: '17.0'
+packages:
+  BottomSheetKit:
+    path: ..
+settings:
+  base:
+    SWIFT_VERSION: '6.0'
+    CODE_SIGNING_ALLOWED: NO
+    GENERATE_INFOPLIST_FILE: YES
+    TARGETED_DEVICE_FAMILY: '1,2'
+targets:
+  BottomSheetSample:
+    type: application
+    platform: iOS
+    sources: [Sample]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.tortle.bottom-sheet.sample
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    dependencies:
+      - package: BottomSheetKit
+  BottomSheetSampleUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [SampleUITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.tortle.bottom-sheet.sample.uitests
+    dependencies:
+      - target: BottomSheetSample
+schemes:
+  BottomSheetSample:
+    build:
+      targets:
+        BottomSheetSample: all
+    test:
+      targets: [BottomSheetSampleUITests]

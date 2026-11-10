@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+xcrun --find swift-format >/dev/null
+if ! command -v swiftlint >/dev/null || [[ "$(swiftlint version)" != '0.65.1' ]]; then
+  echo 'Install SwiftLint 0.65.1 and put it on PATH before continuing.' >&2
+  exit 1
+fi
+git config --local core.hooksPath .githooks
+printf 'Hooks enabled. Run scripts/check to validate the package.\n'

@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+if [[ "$(swiftlint version)" != '0.65.1' ]]; then
+  echo 'SwiftLint 0.65.1 is required.' >&2
+  exit 1
+fi
+if [[ $# == 0 ]]; then
+  set -- Package.swift Sources Tests Examples/Sample Examples/SampleUITests
+fi
+xcrun swift-format lint --strict --recursive "$@"
+swiftlint lint --strict --quiet "$@"

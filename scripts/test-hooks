@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Exercise hooks in a disposable repository, including partial staging."""
+import importlib.machinery
+import importlib.util
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+root = Path(__file__).resolve().parent.parent
+loader = importlib.machinery.SourceFileLoader("commit_messages", str(root / "scripts/check-commit-message"))
+spec = importlib.util.spec_from_loader(loader.name, loader)
+messages = importlib.util.module_from_spec(spec)
+loader.exec_module(messages)
+for message in ("feat: Add sheet", "fix(layout)!: Correct inset", "Merge branch 'main'", 'Revert "feat: Add sheet"'):
+    assert messages.valid(message), message
+for message in ("", "Add sheet", "feat: ", "fix: Broken.", "unknown: Change", "feat(): Change"):
+    assert not messages.valid(message), message
+
+with tempfile.TemporaryDirectory(prefix="bottom-sheet-hooks-") as temporary:
+    repo = Path(temporary)
+    for name in ("scripts", ".githooks"):
+        shutil.copytree(root / name, repo / name)
+    for name in (".swift-format", ".swiftlint.yml"):
+        shutil.copy(root / name, repo / name)
+    tools = repo / "fake-tools"
+    tools.mkdir()
+    (tools / "swiftlint").write_text('#!/bin/sh\n[ "$1" != version ] || echo 0.65.1\n')
+    (tools / "xcrun").write_text('''#!/usr/bin/env python3
+import pathlib, sys
+for arg in sys.argv[1:]:
+    path = pathlib.Path(arg)
+    if path.is_file() and path.suffix == ".swift" and "INVALID" in path.read_text():
+        sys.exit(1)
+''')
+    for tool in tools.iterdir():
+        tool.chmod(0o755)
+    env = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"])
+    env.update(GIT_AUTHOR_NAME="Hook Test", GIT_AUTHOR_EMAIL="test@example.invalid",
+               GIT_COMMITTER_NAME="Hook Test", GIT_COMMITTER_EMAIL="test@example.invalid")
+
+    def run(*args, ok=True):
+        result = subprocess.run(args, cwd=repo, env=env, capture_output=True, text=True)
+        assert (result.returncode == 0) == ok, result.stdout + result.stderr
+
+    run("git", "init", "-b", "main")
+    run("git", "config", "core.hooksPath", ".githooks")
+    source = repo / "Space name.swift"
+    source.write_text("let value = 1\n")
+    run("git", "add", "scripts", ".githooks", ".swift-format", ".swiftlint.yml", source.name)
+    run("git", "commit", "-m", "chore: Initialize fixture")
+    source.write_text("let value = 2\n")
+    run("git", "add", source.name)
+    source.write_text("INVALID unstaged\n")
+    run("git", "commit", "-m", "fix: Accept staged content")
+    assert source.read_text() == "INVALID unstaged\n"
+    run("git", "add", source.name)
+    source.write_text("let value = 3\n")
+    run("git", "commit", "-m", "fix: Reject staged error", ok=False)
+    run("git", "add", source.name)
+    run("git", "commit", "-m", "Invalid message", ok=False)
+    run("git", "commit", "-m", "fix: Restore content")
+    run("git", "mv", source.name, "Renamed file.swift")
+    run("git", "commit", "-m", "refactor: Rename fixture")
+    run("git", "rm", "Renamed file.swift")
+    run("git", "commit", "-m", "chore: Remove fixture")
+print("Hook checks passed")

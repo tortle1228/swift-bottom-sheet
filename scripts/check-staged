@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+"""Lint an index snapshot without touching the working tree or index."""
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+
+
+def git(*args):
+    return subprocess.check_output(["git", *args])
+
+
+root = Path(git("rev-parse", "--show-toplevel").decode().strip())
+os.chdir(root)
+paths = [os.fsdecode(p) for p in git(
+    "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"
+).split(b"\0") if p]
+all_files = bool(set(paths) & {".swift-format", ".swiftlint.yml", "scripts/lint"})
+swift = [p for p in paths if p.endswith(".swift")]
+subprocess.run(["git", "diff", "--cached", "--check"], check=True)
+if swift or all_files:
+    with tempfile.TemporaryDirectory(prefix="bottom-sheet-index-") as temporary:
+        subprocess.run(["git", "checkout-index", "--all", "--prefix", temporary + "/"], check=True)
+        snapshot = Path(temporary)
+        command = snapshot / "scripts/lint"
+        # Execute only the staged checker and configuration, including on the first commit.
+        subprocess.run(["/bin/bash", str(command), *([] if all_files else swift)],
+                       cwd=snapshot, check=True)
