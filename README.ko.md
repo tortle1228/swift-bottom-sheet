@@ -191,3 +191,7 @@ scripts/check
 Bootstrap은 이 저장소의 로컬 Git 훅을 활성화합니다. `scripts/check`는 린트, 훅 자체 검사, 패키지 테스트, 샘플 UI 테스트를 실행합니다. `SIMULATOR_ID`를 지정하지 않으면 첫 번째 사용 가능한 iPhone 시뮬레이터를 선택합니다. 소스 포맷은 `scripts/format`으로 명시적으로 실행하세요. UIKit 패키지 테스트에는 iOS 시뮬레이터가 필요하며 macOS의 `swift test`는 테스트 진입점이 아닙니다. XcodeGen은 `Examples/project.yml` 수정 후 프로젝트를 재생성할 때만 필요하고, 저장된 프로젝트를 여는 데는 필요하지 않습니다. [작업 규칙](AGENTS.md)과 [CI 워크플로](.github/workflows/check.yml)를 참고하세요.
 
 `87a8704` 구현은 린트·훅 검사, 단위 테스트 16개, UI 테스트 11개와 추가 작은 iPhone·iPad 레이아웃 검사를 통과했습니다. iOS 17 배포 타깃·Swift 6 모드로 컴파일했으며 런타임 검사는 iOS 27.2 시뮬레이터에서 수행했습니다. 이는 iOS 17 런타임·실기기 검증이나 실제 인증 서비스 통합 검증을 의미하지 않습니다.
+
+## 라이선스
+
+[MIT 라이선스](LICENSE)를 적용합니다. Copyright (c) 2026 Jaehoon Lee.
