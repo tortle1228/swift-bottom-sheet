@@ -10,11 +10,9 @@
 - iOS SDK와 Swift 6을 지원하는 Xcode. 아래 높이 측정 예제는 Xcode 16 이상에서 제공하는 단일 값 `onGeometryChange` API를 사용합니다.
 - 라이브러리 제품명과 import 이름은 `BottomSheetKit`입니다. 런타임 패키지 의존성은 없습니다.
 
-**배포 상태:** 이 README는 로컬 구현 `87a8704`까지 설명합니다. 2026년 11월 11일 문서 확인 시 원격 `main`은 아직 `c30bcf2`였으며, `maximumWidth`와 `bottomSheetContentHeight(_:)`는 푸시되지 않았습니다. 아래 예제를 모두 사용하려면 `87a8704`가 포함된 로컬 체크아웃을 추가하세요. 원격에서 새로 복제한 저장소에는 아직 이 기능이 없습니다.
+앱의 Xcode 프로젝트에서 **File → Add Package Dependencies**를 선택하고 `https://github.com/tortle1228/swift-bottom-sheet.git`을 입력하세요. **main** 브랜치를 선택한 뒤 **BottomSheetKit** 제품을 앱 타깃에 추가하세요. [저장소](https://github.com/tortle1228/swift-bottom-sheet)는 공개되어 있으며 현재 버전 태그는 없습니다. 브랜치 의존성은 버전이 고정된 릴리스가 아니라 계속 변경되는 코드를 따릅니다.
 
-앱의 Xcode 프로젝트에서 **File → Add Package Dependencies → Add Local**을 선택하고, `Package.swift`가 있는 이 저장소 폴더를 지정한 뒤 **BottomSheetKit** 제품을 앱 타깃에 추가하세요.
-
-원격 설치에는 비공개 [swift-bottom-sheet 저장소](https://github.com/tortle1228/swift-bottom-sheet)에 대한 접근 권한과 해당 권한이 있는 Xcode의 GitHub 계정 설정이 필요합니다. Add Package Dependencies에 `https://github.com/tortle1228/swift-bottom-sheet.git`을 입력하고 **main** 브랜치를 선택한 뒤 **BottomSheetKit**을 앱 타깃에 추가하세요. 현재 버전 태그는 없습니다. 로컬 의존성에서 전환하기 전에 사용할 API가 원격 브랜치에 포함되었는지 확인하세요.
+로컬 개발 시에는 **Add Local**을 선택하고, `Package.swift`가 있는 이 저장소 폴더를 지정한 뒤 **BottomSheetKit**을 앱 타깃에 추가하세요.
 
 Apple의 [로컬 패키지 추가 안내](https://developer.apple.com/documentation/xcode/editing-a-package-dependency-as-a-local-package)와 [원격 패키지 설치 안내](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app)를 참고할 수 있습니다.
 

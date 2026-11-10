@@ -10,11 +10,9 @@ A SwiftUI bottom sheet for forms, selections, and explanations that should fit t
 - Xcode with an iOS SDK and Swift 6 support. The geometry example below uses the single-value `onGeometryChange` API available in Xcode 16 and later.
 - One library product and import: `BottomSheetKit`. No runtime package dependencies.
 
-**Availability:** this README describes the local implementation through `87a8704`. At the documentation check on November 11, 2026, remote `main` was still `c30bcf2`; `maximumWidth` and `bottomSheetContentHeight(_:)` were not yet pushed. Use a local checkout containing `87a8704` for all examples below. A fresh remote clone does not yet contain those additions.
+In your app's Xcode project, choose **File → Add Package Dependencies** and enter `https://github.com/tortle1228/swift-bottom-sheet.git`. Choose the **main** branch and add the **BottomSheetKit** product to your app target. The [repository](https://github.com/tortle1228/swift-bottom-sheet) is public; no version tags are currently provided. A branch dependency follows ongoing changes rather than a versioned release.
 
-In your app's Xcode project, choose **File → Add Package Dependencies → Add Local**, select this repository's folder (the one containing `Package.swift`), and add the **BottomSheetKit** product to your app target.
-
-For remote installation, you need access to the private [swift-bottom-sheet repository](https://github.com/tortle1228/swift-bottom-sheet) and a GitHub account configured in Xcode with that access. Enter `https://github.com/tortle1228/swift-bottom-sheet.git` in Add Package Dependencies, choose the **main** branch, and add **BottomSheetKit** to your app target. No version tags are currently provided. Verify that the remote branch contains the APIs you intend to use before switching from a local dependency.
+For local development, choose **Add Local** instead, select this repository's folder (the one containing `Package.swift`), and add **BottomSheetKit** to your app target.
 
 Apple documents [local package dependencies](https://developer.apple.com/documentation/xcode/editing-a-package-dependency-as-a-local-package) and [remote package installation](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app).
 
