@@ -27,9 +27,11 @@
 
 ## Documentation
 
-- Write instructions and source comments in English. Keep readme.md empty.
-- Do not create standalone documentation, design notes, ADRs, roadmaps,
-  changelogs, or DocC catalogs.
+- Write development instructions and source comments in English.
+- Maintain README.md in English and README.ko.md in Korean. Keep their examples,
+  requirements, supported behavior, and limitations synchronized; link them to each other.
+- Apart from these two READMEs, do not create standalone documentation, design notes,
+  ADRs, roadmaps, changelogs, or DocC catalogs.
 - Document every public API with a concise triple-slash summary. Explain defaults,
   units, side effects, lifecycle behavior, and constraints that affect callers.
 - Add parameter, return-value, and error descriptions when they clarify usage.

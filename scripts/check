@@ -23,4 +23,3 @@ xcodebuild -scheme BottomSheetKit -destination "platform=iOS Simulator,id=$SIMUL
 xcodebuild -project Examples/BottomSheetSample.xcodeproj -scheme BottomSheetSample \
   -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
   -derivedDataPath .build/SampleDerivedData CODE_SIGNING_ALLOWED=NO test
-[[ ! -s readme.md ]] || { echo 'readme.md must remain empty' >&2; exit 1; }
